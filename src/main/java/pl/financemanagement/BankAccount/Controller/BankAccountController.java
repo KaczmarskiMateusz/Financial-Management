@@ -66,7 +66,7 @@ public class BankAccountController extends DemoResolver<BankAccountService> {
                 principal.getName()).getBankAccountBalance(principal.getName(), externalId));
     }
 
-    static BankAccountResponse buildErrorResponse(BindingResult result) {
+    private BankAccountResponse buildErrorResponse(BindingResult result) {
         Map<String, String> errors = new HashMap<>();
         result.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
         return new BankAccountErrorResponse(false, errors);
