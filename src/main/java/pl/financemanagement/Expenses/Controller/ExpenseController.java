@@ -30,7 +30,7 @@ public class ExpenseController extends DemoResolver<ExpenseService> {
     }
 
     @PostMapping()
-    ResponseEntity<ExpenseResponse> createExpense(@RequestBody ExpenseRequest request,
+    ResponseEntity<ExpenseResponse> createExpense(@RequestBody @Valid ExpenseRequest request,
                                                   BindingResult result,
                                                   Principal principal) {
         if (result.hasErrors()) {
@@ -49,20 +49,16 @@ public class ExpenseController extends DemoResolver<ExpenseService> {
         return ResponseEntity.ok(resolveService(principal.getName()).updateExpense(request, principal.getName()));
     }
 
-    @GetMapping("/list/{externalId}")
-    ResponseEntity<List<ExpenseDto>> findExpenses(@PathVariable UUID externalId, Principal principal) {
+    @GetMapping("/{bankAccountExternalId}/list")
+    ResponseEntity<List<ExpenseDto>> findExpenses(@PathVariable UUID bankAccountExternalId,
+                                                  Principal principal) {
         return ResponseEntity.ok(resolveService(
-                principal.getName()).findExpenseByUserNameAndExternalId(principal.getName(), externalId));
+                principal.getName()).findExpensesForUserByBankAccount(principal.getName(), bankAccountExternalId));
     }
 
-    @GetMapping("externalId/{externalId}")
-    ResponseEntity<ExpenseResponse> findExpenses(@PathVariable UUID externalId,
-                                                 @RequestParam(required = false, defaultValue = "false") boolean isDemo,
-                                                 BindingResult result,
+    @GetMapping("/{externalId}")
+    ResponseEntity<ExpenseResponse> findExpense(@PathVariable @Valid UUID externalId,
                                                  Principal principal) {
-        if (result.hasErrors()) {
-            return ResponseEntity.badRequest().body(buildErrorResponse(result));
-        }
         return ResponseEntity.ok(resolveService(
                 principal.getName()).findExpenseByIdAndUserId(principal.getName(), externalId));
     }
@@ -72,7 +68,7 @@ public class ExpenseController extends DemoResolver<ExpenseService> {
         return service().getExpensesCategories();
     }
 
-    static ExpenseResponse buildErrorResponse(BindingResult result) {
+    private ExpenseResponse buildErrorResponse(BindingResult result) {
         Map<String, String> errors = new HashMap<>();
         result.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
         return new ExpenseResponse(false, errors);

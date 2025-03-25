@@ -25,7 +25,7 @@ public class ExpenseServiceDemo implements ExpenseService {
     }
 
     @Override
-    public List<ExpenseDto> findExpenseByUserNameAndExternalId(String email, UUID bankAccountExternalId) {
+    public List<ExpenseDto> findExpensesForUserByBankAccount(String email, UUID bankAccountExternalId) {
         return List.of(buildExpenseDto());
     }
 

@@ -14,7 +14,7 @@ public interface ExpenseService {
 
     ExpenseResponse updateExpense(ExpenseRequest expenseRequest, String email);
 
-    List<ExpenseDto> findExpenseByUserNameAndExternalId(String email, UUID expenseExternalId);
+    List<ExpenseDto> findExpensesForUserByBankAccount(String email, UUID bankAccountExternalId);
 
     ExpenseResponse findExpenseByIdAndUserId(String email, UUID expenseExternalId);
 

@@ -99,7 +99,7 @@ public class ExpenseProducerService implements ExpenseService {
     }
 
     @Override
-    public List<ExpenseDto> findExpenseByUserNameAndExternalId(String email, UUID bankAccountExternalId) {
+    public List<ExpenseDto> findExpensesForUserByBankAccount(String email, UUID bankAccountExternalId) {
         UserAccount userAccount = getUserAccount(email);
         BankAccount bankAccount = getBankAccountByUserOrThrow(userAccount.getId(), bankAccountExternalId);
 
