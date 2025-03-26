@@ -41,7 +41,6 @@ class BankAccountRepositoryTest {
 
     private BankAccount buildBankAccount() {
         BankAccount bankAccount = new BankAccount();
-        bankAccount.setAccountNumber(UUID_NUMBER);
         bankAccount.setAccountName("TestAccount");
         bankAccount.setExternalId(UUID_NUMBER);
         bankAccount.setUser(new UserAccount());

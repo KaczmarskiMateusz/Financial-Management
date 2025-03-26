@@ -6,16 +6,13 @@ import org.springframework.stereotype.Component;
 public class BankAccountMapper {
 
     public BankAccountDto mapToAccountDto(BankAccount bankAccount) {
-        return new BankAccountDto.AccountDtoBuilder()
-                .withExternalId(bankAccount.getExternalId())
-                .withAccountName(bankAccount.getAccountName())
-                .withAccountNumber(bankAccount.getAccountNumber())
-                .withAccountBalance(bankAccount.getAccountBalance())
+        return new BankAccountDto.BankAccountDtoBuilder()
+                .externalId(bankAccount.getExternalId())
+                .accountName(bankAccount.getAccountName())
+                .accountBalance(bankAccount.getAccountBalance())
+                .currency(bankAccount.getCurrency())
                 .build();
     }
-
-
-
 
 
 }

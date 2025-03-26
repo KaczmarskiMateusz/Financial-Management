@@ -105,7 +105,7 @@ public class BankAccountServiceImpl implements BankAccountService {
         kafkaTemplate.send("user_account_delete_topic", user);
 
         LOGGER.info("Successfully deleted user: {}, bank account: {}, and all expenses",
-                user.getEmail(), bankAccount.getAccountNumber());
+                user.getEmail(), bankAccount.getExternalId());
         return new BankAccountResponse(true);
     }
 
@@ -116,7 +116,7 @@ public class BankAccountServiceImpl implements BankAccountService {
         return account.getAccountBalance();
     }
 
-    public boolean checkIfUserCanCreateBankAccount(long userId, Currency currency) {
+    public boolean  checkIfUserCanCreateBankAccount(long userId, Currency currency) {
         return bankAccountRepository.findAllAccountCurrenciesForUser(userId)
                 .stream()
                 .filter(Objects::nonNull)
@@ -129,7 +129,6 @@ public class BankAccountServiceImpl implements BankAccountService {
         bankAccount.setAccountName(bankAccountRequest.getAccountName());
         bankAccount.setAccountBalance(bankAccountRequest.getAccountBalance());
         bankAccount.setCreatedOn(Instant.now());
-        bankAccount.setAccountNumber(UUID.randomUUID());
         bankAccount.setExternalId(UUID.randomUUID());
         bankAccount.setCurrency(bankAccountRequest.getCurrency());
         return bankAccount;

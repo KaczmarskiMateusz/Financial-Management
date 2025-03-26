@@ -43,11 +43,12 @@ public class BankAccountServiceDemo implements BankAccountService {
     }
 
     private BankAccountDto buildDemoAccount() {
-        return new BankAccountDto.AccountDtoBuilder()
-                .withExternalId(UUID.randomUUID())
-                .withAccountName("Test account")
-                .withAccountNumber(ACCOUNT_NUMBER)
-                .withCurrency(Currency.EUR)
+        return  BankAccountDto.builder()
+                .externalId(UUID.randomUUID())
+                .accountName("Test account")
+                .accountNumber(ACCOUNT_NUMBER)
+                .currency(Currency.EUR)
+                .accountBalance(BigDecimal.valueOf(10_000_000))
                 .build();
     }
 }

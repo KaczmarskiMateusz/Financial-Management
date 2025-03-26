@@ -24,7 +24,6 @@ CREATE TABLE app.bank_account (
                               modify_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                               account_version BIGINT NOT NULL,
                               account_name VARCHAR(255) NOT NULL,
-                              account_number UUID NOT NULL,
                               account_balance DECIMAL(19, 4),
                               currency VARCHAR(255),
                               FOREIGN KEY (user_id) REFERENCES user_account(id)

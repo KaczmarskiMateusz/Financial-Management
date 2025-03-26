@@ -37,9 +37,6 @@ public class BankAccount {
     @Column(name = "account_name", nullable = false, unique = true)
     private String accountName;
 
-    @Column(name = "account_number", nullable = false, unique = true)
-    private UUID accountNumber;
-
     @Column(nullable = false)
     private BigDecimal accountBalance;
 
