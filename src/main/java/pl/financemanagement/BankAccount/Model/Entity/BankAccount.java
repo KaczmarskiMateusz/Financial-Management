@@ -1,9 +1,10 @@
-package pl.financemanagement.BankAccount.Model;
+package pl.financemanagement.BankAccount.Model.Entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import pl.financemanagement.BankAccount.Model.Currency;
 import pl.financemanagement.User.UserModel.UserAccount;
 
 import java.math.BigDecimal;
@@ -19,20 +20,19 @@ public class BankAccount {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(name = "external_id", nullable = false, unique = true)
     private UUID externalId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private UserAccount user;
+    @Column(name = "user_id", nullable = false)
+    private Long user;
 
     private Instant createdOn;
     private Instant modifyOn;
 
     @Version
-    private long accountVersion;
+    private Long accountVersion;
 
     @Column(name = "account_name", nullable = false, unique = true)
     private String accountName;

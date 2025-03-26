@@ -1,5 +1,6 @@
 package pl.financemanagement.PasswordTools;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,4 +22,5 @@ public class PasswordServiceImpl implements PasswordService {
     public boolean verifyPassword(String plainPassword, String hashedPassword) {
         return passwordEncoder.matches(plainPassword, hashedPassword);
     }
+
 }

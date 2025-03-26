@@ -1,6 +1,7 @@
 package pl.financemanagement.BankAccount.Model;
 
 import org.springframework.stereotype.Component;
+import pl.financemanagement.BankAccount.Model.Entity.BankAccount;
 
 @Component
 public class BankAccountMapper {

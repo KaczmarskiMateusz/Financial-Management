@@ -3,9 +3,8 @@ package pl.financemanagement.BankAccount.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
-import pl.financemanagement.BankAccount.Model.BankAccount;
+import pl.financemanagement.BankAccount.Model.Entity.BankAccount;
 import pl.financemanagement.BankAccount.Repository.BankAccountRepository;
-import pl.financemanagement.User.UserModel.UserAccount;
 
 public class BankAccountConsumerService {
 

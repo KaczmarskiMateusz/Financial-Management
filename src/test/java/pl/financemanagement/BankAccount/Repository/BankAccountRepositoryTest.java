@@ -5,7 +5,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import pl.financemanagement.BankAccount.Model.BankAccount;
+import pl.financemanagement.BankAccount.Model.Entity.BankAccount;
 import pl.financemanagement.User.UserModel.UserAccount;
 
 import java.util.Optional;
@@ -43,7 +43,7 @@ class BankAccountRepositoryTest {
         BankAccount bankAccount = new BankAccount();
         bankAccount.setAccountName("TestAccount");
         bankAccount.setExternalId(UUID_NUMBER);
-        bankAccount.setUser(new UserAccount());
+        bankAccount.setUser(1L);
         return bankAccount;
     }
 }

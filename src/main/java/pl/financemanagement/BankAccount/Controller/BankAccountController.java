@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import pl.financemanagement.ApplicationConfig.DemoResolver.DemoResolver;
+import pl.financemanagement.BankAccount.Model.BankAccountDto;
 import pl.financemanagement.BankAccount.Model.BankAccountErrorResponse;
 import pl.financemanagement.BankAccount.Model.BankAccountRequest;
 import pl.financemanagement.BankAccount.Model.BankAccountResponse;
@@ -14,6 +15,7 @@ import pl.financemanagement.BankAccount.Service.BankAccountService;
 import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -64,6 +66,11 @@ public class BankAccountController extends DemoResolver<BankAccountService> {
     public ResponseEntity<BigDecimal> bankAccountBalance(@PathVariable UUID externalId, Principal principal) {
         return ResponseEntity.ok(resolveService(
                 principal.getName()).getBankAccountBalance(principal.getName(), externalId));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<BankAccountDto>> getAccounts(Principal principal) {
+        return ResponseEntity.ok(resolveService(principal.getName()).getAllAccounts(principal.getName()));
     }
 
     private BankAccountResponse buildErrorResponse(BindingResult result) {

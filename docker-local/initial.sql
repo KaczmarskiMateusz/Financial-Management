@@ -47,17 +47,18 @@ CREATE TABLE app.expense (
 INSERT INTO user_account (external_id, email, name, version, user_role, password)
 VALUES
     (gen_random_uuid(), 'admin@financialapp.com', 'admin', 1, 'ADMIN', '$2a$12$YsXuaGHGUoXSdwsMtzenY.p2A5bB.chYlBYcdCQ..QWXlKOOOMqHG'),
-    (gen_random_uuid(), 'demo@financialapp.com', 'demo', 1, 'USER', '$2a$12$kIB0Vsuy9Gqm/jz.LJdZPu4Nzh9Gn33CsvQ.D510wnH9.Zg4uHNzq'),
-    (gen_random_uuid(), 'user@financialapp.com', 'user', 1, 'USER', '$2a$12$8tokTl6alcZURDFAWSqZ4et6eSL6jy33RLpEH8y470sN7CGWYNg/'),
+    (gen_random_uuid(), 'demo@financialapp.com', 'demo', 1, 'USER', '$2a$10$l4Pn4N2pQNVGOrpdU0WxYOrQFhOCw7a5NeDX.vlJj0z2MY91txCry'),
+    (gen_random_uuid(), 'user@financialapp.com', 'user', 1, 'USER', '$2a$10$NGV2B/i/ZoS4EcRdi4bqC.7hiEGe0UELAtmg5UhwBGccOyGwLPiVu'),
     (gen_random_uuid(), 'revenue@financialapp.com', 'Revenue User', 1, 'USER', '$2a$12$ExampleHashedPasswordForRevenueUser');
 
 -- Wstawianie kont bankowych dla użytkowników
-INSERT INTO bank_account (external_id, user_id, account_version, account_name, account_number, account_balance, currency)
+INSERT INTO bank_account (external_id, user_id, account_version, account_name, account_balance, currency)
 VALUES
-    (gen_random_uuid(), (SELECT id FROM user_account WHERE email = 'admin@financialapp.com'), 1, 'Admin Account', '9e1f957c-3239-43a4-bd36-550e2ebc03ac'::uuid, 1000.00, 'USD'),
-    (gen_random_uuid(), (SELECT id FROM user_account WHERE email = 'demo@financialapp.com'), 1, 'Demo Bank Account', 'ea8ff5cf-6b4e-4e1f-8629-a6806da85f55'::uuid, 500.00, 'PLN'),
-    (gen_random_uuid(), (SELECT id FROM user_account WHERE email = 'user@financialapp.com'), 1, 'User Bank Account', '14d67eea-a317-4b6e-88e7-bc5da229f280'::uuid, 500.00, 'USD'),
-    (gen_random_uuid(), (SELECT id FROM user_account WHERE email = 'revenue@financialapp.com'), 1, 'Revenue Bank Account', '2a6b957c-1234-4a49-a92f-fb9d1b1b9999'::uuid, 750.00, 'USD');
+    (gen_random_uuid(), (SELECT id FROM user_account WHERE email = 'admin@financialapp.com'), 1, 'Admin Account', 1000.00, 'USD'),
+    (gen_random_uuid(), (SELECT id FROM user_account WHERE email = 'demo@financialapp.com'), 1, 'Demo Bank Account', 500.00, 'PLN'),
+    (gen_random_uuid(), (SELECT id FROM user_account WHERE email = 'user@financialapp.com'), 1, 'User Bank Account USD', 500.00, 'USD'),
+    (gen_random_uuid(), (SELECT id FROM user_account WHERE email = 'user@financialapp.com'), 1, 'User Bank Account PLN', 10000, 'PLN'),
+    (gen_random_uuid(), (SELECT id FROM user_account WHERE email = 'revenue@financialapp.com'), 1, 'Revenue Bank Account', 750.00, 'USD');
 
 -- Wstawianie rekordów do tabeli expense dla różnych użytkowników
 

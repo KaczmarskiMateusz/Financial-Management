@@ -8,6 +8,8 @@ import pl.financemanagement.BankAccount.Model.BankAccountResponse;
 import pl.financemanagement.BankAccount.Model.Currency;
 
 import java.math.BigDecimal;
+import java.security.Principal;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -40,6 +42,11 @@ public class BankAccountServiceDemo implements BankAccountService {
     @Override
     public BigDecimal getBankAccountBalance(String email, UUID bankAccountExternalId) {
         return BigDecimal.valueOf(10_000);
+    }
+
+    @Override
+    public List<BankAccountDto> getAllAccounts(String email) {
+        return List.of();
     }
 
     private BankAccountDto buildDemoAccount() {

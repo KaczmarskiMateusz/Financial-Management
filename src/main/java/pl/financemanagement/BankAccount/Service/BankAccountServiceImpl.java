@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import pl.financemanagement.BankAccount.Model.*;
+import pl.financemanagement.BankAccount.Model.Entity.BankAccount;
 import pl.financemanagement.BankAccount.Model.Exceptions.BankAccountExistsException;
 import pl.financemanagement.BankAccount.Model.Exceptions.BankAccountNotFoundException;
 import pl.financemanagement.BankAccount.Repository.BankAccountRepository;
@@ -58,20 +59,18 @@ public class BankAccountServiceImpl implements BankAccountService {
             throw new BankAccountExistsException("Account with currency " + bankAccountRequest.getCurrency() + " already exists");
         }
 
-        BankAccount accountToSave = prepareAccount(bankAccountRequest, user);
-        BankAccount savedBankAccount = bankAccountRepository.save(accountToSave);
+        BankAccount accountToSave = prepareAccount(bankAccountRequest, user.getId());
+        BankAccount savedAccount = bankAccountRepository.save(accountToSave);
 
         LOGGER.info("Added account with externalId {} for userId {}",
-                savedBankAccount.getExternalId(), savedBankAccount.getUser().getId());
+                savedAccount.getExternalId(), savedAccount.getId());
 
-        return new BankAccountResponse(true, bankAccountMapper.mapToAccountDto(savedBankAccount));
+        return new BankAccountResponse(true, bankAccountMapper.mapToAccountDto(savedAccount));
     }
 
     @Override
     @Transactional
     public BankAccountResponse updateAccount(BankAccountRequest bankAccountRequest, String email) {
-//        validUUIDFromString(bankAccountRequest.getExternalId());
-
         UserAccount user = getUserByEmailOrThrow(email);
         BankAccount bankAccount = getBankAccountByUserOrThrow(user.getId(), bankAccountRequest.getExternalId());
 
@@ -80,7 +79,7 @@ public class BankAccountServiceImpl implements BankAccountService {
         BankAccount savedAccount = bankAccountRepository.save(updatedAccount);
 
         LOGGER.info("Updated account with externalId {} for userId {}",
-                savedAccount.getExternalId(), savedAccount.getUser().getId());
+                savedAccount.getExternalId(), savedAccount.getId());
         return new BankAccountResponse(true, bankAccountMapper.mapToAccountDto(savedAccount));
     }
 
@@ -116,16 +115,25 @@ public class BankAccountServiceImpl implements BankAccountService {
         return account.getAccountBalance();
     }
 
-    public boolean  checkIfUserCanCreateBankAccount(long userId, Currency currency) {
+    @Override
+    public List<BankAccountDto> getAllAccounts(String email) {
+        UserAccount user = getUserByEmailOrThrow(email);
+
+        return bankAccountRepository.findBankAccountByUserId(user.getId())
+                .stream()
+                .map(bankAccountMapper::mapToAccountDto).toList();
+    }
+
+    public boolean checkIfUserCanCreateBankAccount(long userId, Currency currency) {
         return bankAccountRepository.findAllAccountCurrenciesForUser(userId)
                 .stream()
                 .filter(Objects::nonNull)
                 .anyMatch(accountCurrency -> accountCurrency.equals(currency.name()));
     }
 
-    private BankAccount prepareAccount(BankAccountRequest bankAccountRequest, UserAccount userAccount) {
+    private BankAccount prepareAccount(BankAccountRequest bankAccountRequest, long userId) {
         BankAccount bankAccount = new BankAccount();
-        bankAccount.setUser(userAccount);
+        bankAccount.setUser(userId);
         bankAccount.setAccountName(bankAccountRequest.getAccountName());
         bankAccount.setAccountBalance(bankAccountRequest.getAccountBalance());
         bankAccount.setCreatedOn(Instant.now());
