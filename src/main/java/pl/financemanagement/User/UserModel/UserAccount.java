@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import pl.financemanagement.Expenses.Model.Expense;
+import pl.financemanagement.Expenses.Model.Entity.Expense;
 
 import java.time.Instant;
 import java.util.ArrayList;

@@ -1,8 +1,10 @@
-package pl.financemanagement.Expenses.Model;
+package pl.financemanagement.Expenses.Model.Entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import pl.financemanagement.Expenses.Model.ExpenseCategory;
+import pl.financemanagement.Expenses.Model.ExpenseType;
 import pl.financemanagement.User.UserModel.UserAccount;
 
 import java.math.BigDecimal;
@@ -41,5 +43,7 @@ public class Expense {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private UserAccount user;
+
+    private Long bankAccountId;
 
 }
