@@ -1,5 +1,6 @@
 package pl.financemanagement.BankAccount.Model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -21,7 +22,8 @@ public class BankAccountRequest {
     @NotNull(message = "account balance cannot be null")
     @DecimalMin(value = "0.0", message = "account balance should be more then 0")
     private BigDecimal accountBalance;
-    @NotNull(message = "Currency cannot be null")
+    @NotNull(message = "Currency cannot be null and must be one of: AUD, PLN, GBP, USD, EUR")
+    @JsonDeserialize(using = CurrencyDeserializer.class)
     private Currency currency;
 
 }
