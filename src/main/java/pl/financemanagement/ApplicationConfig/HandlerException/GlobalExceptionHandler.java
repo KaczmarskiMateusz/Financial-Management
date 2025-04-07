@@ -41,7 +41,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<GlobalErrorResponse> handleInvalidInput(HttpMessageNotReadableException e) {
         log.error("Error during processes request: {}", e.getMessage());
-        GlobalErrorResponse response = new GlobalErrorResponse("Cannot deserialize value from request ", false);
+        GlobalErrorResponse response = new GlobalErrorResponse("Cannot deserialize value from request", false);
         return ResponseEntity.badRequest().body(response);
     }
 
