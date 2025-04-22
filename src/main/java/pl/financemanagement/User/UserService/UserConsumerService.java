@@ -22,6 +22,7 @@ public class UserConsumerService {
     void consumeUserAccountEvent(UserAccount userAccount) {
         LOGGER.info("Received user account to be delete:" + userAccount.getName());
         userAccountRepository.delete(userAccount);
+
         LOGGER.info("Removed user account to remove:" + userAccount.getName());
     }
 

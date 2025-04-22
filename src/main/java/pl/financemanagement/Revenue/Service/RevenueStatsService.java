@@ -8,7 +8,7 @@ import pl.financemanagement.EventWorker.Model.EventResponse;
 import pl.financemanagement.EventWorker.Model.EventStatus;
 import pl.financemanagement.EventWorker.Model.EventType;
 import pl.financemanagement.EventWorker.Service.EventHandler;
-import pl.financemanagement.Expenses.Repository.ExpenseRepository;
+import pl.financemanagement.Expense.Repository.ExpenseRepository;
 
 @Service
 @Qualifier("revenueStatsService")
