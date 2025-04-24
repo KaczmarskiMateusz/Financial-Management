@@ -57,9 +57,9 @@ public class BankAccountController extends DemoResolver<BankAccountService> {
     }
 
     @DeleteMapping("/{externalId}")
-    ResponseEntity<BankAccountResponse> deleteAccount(@PathVariable UUID externalId, Principal principal) {
+    ResponseEntity<BankAccountResponse> deleteAccount(@PathVariable String externalId, Principal principal) {
         return ResponseEntity.ok().body(resolveService(
-                principal.getName()).deleteAccount(principal.getName(), externalId));
+                principal.getName()).deleteAccount(principal.getName(), UUID.fromString(externalId)));
     }
 
     @GetMapping("/bankBalance/{externalId}")
