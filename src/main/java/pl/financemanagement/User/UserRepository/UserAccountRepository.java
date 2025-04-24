@@ -21,8 +21,8 @@ public interface UserAccountRepository extends JpaRepository<UserAccount, Long> 
 
     @Query(nativeQuery = true, value = """
             SELECT *
-            FROM app.user_account 
-            WHERE email = :email 
+            FROM app.user_account
+            WHERE email = :email
             AND external_id = :externalId
             """)
     Optional<UserAccount> findUserByEmailAndExternalId(@Param("email") String email,

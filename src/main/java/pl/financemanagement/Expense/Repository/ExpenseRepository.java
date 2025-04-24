@@ -16,17 +16,15 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
     @Query(nativeQuery = true, value = """
             SELECT *
             FROM app.expense
-            WHERE external_id = :externalId AND user_id = :user_id;
-            """)
+            WHERE external_id = :externalId AND user_id = :userId""")
     Optional<Expense> findExpenseByExternalIdAndUserId(@Param("externalId") UUID externalId,
-                                                       @Param("user_id") long user_id);
+                                                       @Param("userId") long userId);
 
 
     @Query(nativeQuery = true, value = """
             SELECT *
             FROM app.expense
-            WHERE user_id = :user_id;
-            """)
-    List<Expense> findExpensesByUserId(@Param("user_id") long user_id);
+            WHERE user_id = :userId""")
+    List<Expense> findExpensesByUserId(@Param("userId") long userId);
 
 }

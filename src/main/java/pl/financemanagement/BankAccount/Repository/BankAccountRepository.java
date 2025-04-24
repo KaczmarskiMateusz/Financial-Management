@@ -14,14 +14,16 @@ import java.util.UUID;
 public interface BankAccountRepository extends JpaRepository<BankAccount, Long> {
 
     @Query(nativeQuery = true, value = """
-            SELECT * 
-            FROM app.bank_account  
-            WHERE  user_id = :user_id and external_id = :external_id; """)
-    Optional<BankAccount> findBankAccountByUserIdAndExternalId(@Param("user_id") long user_id,
-                                                               @Param("external_id") UUID external_id);
+            SELECT *
+              FROM app.bank_account
+             WHERE user_id     = :userId
+               AND external_id = :externalId"""
+    )
+    Optional<BankAccount> findByUserAndExternalId(@Param("userId") Long userId,
+                                                  @Param("externalId") UUID externalId);
 
     @Query(nativeQuery = true, value = """
-            select currency 
+            select currency
             from app.bank_account 
             where user_id = :user_id """)
     List<String> findAllAccountCurrenciesForUser(@Param("user_id") long userId);
@@ -29,7 +31,7 @@ public interface BankAccountRepository extends JpaRepository<BankAccount, Long> 
     @Query(nativeQuery = true, value = """
             select *
             from app.bank_account
-            where user_id = :user_id """)
+            where user_id = :user_id""")
     List<BankAccount> findBankAccountByUserId(@Param("user_id") long userId);
 
 }
