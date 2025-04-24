@@ -2,6 +2,7 @@ package pl.financemanagement.Expense.Service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import pl.financemanagement.BankAccount.Model.Entity.BankAccount;
@@ -21,6 +22,7 @@ public class ExpenseConsumerService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExpenseConsumerService.class);
 
+    @Autowired
     private final ExpenseRepository expenseRepository;
     private final BankAccountRepository bankAccountRepository;
 
@@ -36,7 +38,7 @@ public class ExpenseConsumerService {
         Expense expense = buildExpense(event);
         expenseRepository.save(expense);
 
-        BankAccount bankAccount = bankAccountRepository.findBankAccountByUserIdAndExternalId(
+        BankAccount bankAccount = bankAccountRepository.findByUserAndExternalId(
                 event.getUserAccount().getId(), event.getBankAccountExternalId() )
                 .orElseThrow(() -> new BankAccountNotFoundException("Bank account not found for user " + event.getUserAccount().getId()));
         bankAccount.setAccountBalance(event.getBankBalance());
@@ -57,7 +59,7 @@ public class ExpenseConsumerService {
         expense.setModifyOn(Instant.now());
         expenseRepository.save(expense);
 
-        BankAccount bankAccount = bankAccountRepository.findBankAccountByUserIdAndExternalId(
+        BankAccount bankAccount = bankAccountRepository.findByUserAndExternalId(
                 event.getUserId(), event.getBankAccountExternalId())
                 .orElseThrow(() -> new BankAccountNotFoundException("Bank account not found for user " + event.getUserId()));
         bankAccount.setAccountBalance(event.getBankBalance());

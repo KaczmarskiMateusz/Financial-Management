@@ -6,7 +6,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import pl.financemanagement.BankAccount.Model.Entity.BankAccount;
-import pl.financemanagement.User.UserModel.UserAccount;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -35,7 +34,7 @@ class BankAccountRepositoryTest {
     @ParameterizedTest
     @ValueSource(longs = {1,2,3,4,5})
     void findBankAccountByExistingId(long id) {
-        Optional<BankAccount> account = bankAccountRepository.findBankAccountByUserIdAndExternalId(id, UUID_NUMBER);
+        Optional<BankAccount> account = bankAccountRepository.findByUserAndExternalId(id, UUID_NUMBER);
         assertThat(account.isEmpty());
     }
 

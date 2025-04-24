@@ -36,12 +36,12 @@ public class ExpenseProducerService implements ExpenseService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExpenseProducerService.class);
 
-    @Autowired
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final ExpenseRepository expenseRepository;
     private final UserAccountRepository userAccountRepository;
     private final BankAccountRepository bankAccountRepository;
 
+    @Autowired
     public ExpenseProducerService(KafkaTemplate<String, Object> kafkaTemplate, ExpenseRepository expenseRepository, UserAccountRepository userAccountRepository, BankAccountRepository bankAccountRepository) {
         this.kafkaTemplate = kafkaTemplate;
         this.expenseRepository = expenseRepository;
@@ -54,7 +54,7 @@ public class ExpenseProducerService implements ExpenseService {
     public ExpenseResponse createExpense(ExpenseRequest expenseRequest, String email) {
         UserAccount userAccount = getUserAccount(email);
 
-        BankAccount bankAccount = bankAccountRepository.findBankAccountByUserIdAndExternalId(
+        BankAccount bankAccount = bankAccountRepository.findByUserAndExternalId(
                         userAccount.getId(), expenseRequest.getBankAccountExternalId())
                 .orElseThrow(() -> new BankAccountNotFoundException("Bank account not found"));
 
@@ -63,7 +63,6 @@ public class ExpenseProducerService implements ExpenseService {
 
         Expense expense = mapToExpense(expenseRequest);
         expense.setUser(userAccount);
-        expense.setVersion(1);
 
         expenseRepository.save(expense);
 
@@ -143,7 +142,7 @@ public class ExpenseProducerService implements ExpenseService {
     }
 
     private BankAccount getBankAccountByUserOrThrow(long userId, UUID externalId) {
-        return bankAccountRepository.findBankAccountByUserIdAndExternalId(userId, externalId)
+        return bankAccountRepository.findByUserAndExternalId(userId, externalId)
                 .orElseThrow(() -> new BankAccountNotFoundException("Account for user " + userId + " not found"));
     }
 
@@ -186,7 +185,7 @@ public class ExpenseProducerService implements ExpenseService {
     }
 
     private BankAccount findBankAccountOrThrow(long userId, UUID externalId) {
-        return bankAccountRepository.findBankAccountByUserIdAndExternalId(userId, externalId)
+        return bankAccountRepository.findByUserAndExternalId(userId, externalId)
                 .orElseThrow(() -> new BankAccountNotFoundException("Account for user " + userId + " not found"));
     }
 

@@ -124,6 +124,7 @@ public class BankAccountServiceImpl implements BankAccountService {
                 .map(bankAccountMapper::mapToAccountDto).toList();
     }
 
+    //TODO
     public boolean checkIfUserCanCreateBankAccount(long userId, Currency currency) {
         return bankAccountRepository.findAllAccountCurrenciesForUser(userId)
                 .stream()
@@ -137,8 +138,8 @@ public class BankAccountServiceImpl implements BankAccountService {
         bankAccount.setAccountName(bankAccountRequest.getAccountName());
         bankAccount.setAccountBalance(bankAccountRequest.getAccountBalance());
         bankAccount.setCreatedOn(Instant.now());
-        bankAccount.setExternalId(UUID.randomUUID());
         bankAccount.setCurrency(bankAccountRequest.getCurrency());
+        bankAccount.setExternalId(UUID.randomUUID());
         return bankAccount;
     }
 
@@ -156,7 +157,7 @@ public class BankAccountServiceImpl implements BankAccountService {
     }
 
     private BankAccount getBankAccountByUserOrThrow(long userId, UUID externalId) {
-        return bankAccountRepository.findBankAccountByUserIdAndExternalId(userId, externalId)
+        return bankAccountRepository.findByUserAndExternalId(userId, externalId)
                 .orElseThrow(() -> new BankAccountNotFoundException("Account for user " + userId + " not found"));
     }
 

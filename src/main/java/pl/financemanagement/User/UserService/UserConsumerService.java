@@ -21,7 +21,7 @@ public class UserConsumerService {
     @KafkaListener(topics = "user_account_delete_topic", groupId = "user-group")
     void consumeUserAccountEvent(UserAccount userAccount) {
         LOGGER.info("Received user account to be delete:" + userAccount.getName());
-        userAccountRepository.delete(userAccount);
+        userAccountRepository.deleteById(userAccount.getId());
 
         LOGGER.info("Removed user account to remove:" + userAccount.getName());
     }
