@@ -41,7 +41,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<GlobalErrorResponse> handleInvalidInput(HttpMessageNotReadableException e) {
         log.error("Error during processes request: {}", e.getMessage());
-        GlobalErrorResponse response = new GlobalErrorResponse("Cannot deserialize value from request", false);
+        GlobalErrorResponse response = new GlobalErrorResponse(e.getMessage(), false);
         return ResponseEntity.badRequest().body(response);
     }
 
@@ -68,11 +68,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<UserErrorResponse> handleUserNotFoundException(UserNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new UserErrorResponse(false, ex.getMessage()));
-    }
-
-    @ExceptionHandler(UserExistsException.class)
-    public ResponseEntity<UserErrorResponse> handleUserExistsException(UserExistsException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(new UserErrorResponse(false, ex.getMessage()));
     }
 
     private Map<String, String> buildErrorResponse(BindingResult result) {
