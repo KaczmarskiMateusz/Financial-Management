@@ -11,11 +11,11 @@ import pl.financemanagement.User.UserModel.*;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
 
 @ExtendWith(MockitoExtension.class)
 class UserDemoServiceImplTest {
 
+    //TODO refactor tests!!
     private final static String NAME = "Demo";
     private final static String EMAIL = "demo@financialapp.com";
     private final static String UPDATED_USER_EMAIL = "demo1@financialapp.com";
@@ -99,12 +99,11 @@ class UserDemoServiceImplTest {
     }
 
     private UserDto buildUserDto(UUID externalId, String name, String email) {
-        UserDto userDto = new UserDto();
-        userDto.setExternalId(externalId);
-        userDto.setName(name);
-        userDto.setEmail(email);
-        userDto.setUserRole(UserRole.USER);
-        return userDto;
+        return UserDto.builder()
+                .email(email)
+                .name(name)
+                .externalId(externalId)
+                .build();
     }
 
     private UserUpdateRequest buildUserUpdateRequest(String email, String name) {

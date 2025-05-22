@@ -6,8 +6,6 @@ import pl.financemanagement.User.UserModel.*;
 
 import java.util.UUID;
 
-import static pl.financemanagement.User.UserModel.UserRole.USER;
-
 @Service
 @Qualifier("userServiceDemo")
 public class UserDemoServiceImpl implements UserService {
@@ -24,8 +22,7 @@ public class UserDemoServiceImpl implements UserService {
 
     @Override
     public UserResponse updateUser(UserUpdateRequest userRequest, String email) {
-        UserDto userDto = UserDto.buildUserDto(UPDATED_USER_EMAIL, USER_NAME, EXTERNAL_ID, USER);
-        return new UserResponse(true, userDto);
+        return new UserResponse(true, buildUserDto());
     }
 
     @Override
@@ -44,7 +41,11 @@ public class UserDemoServiceImpl implements UserService {
     }
 
     private UserDto buildUserDto() {
-        return UserDto.buildUserDto(USER_EMAIL, USER_NAME, EXTERNAL_ID, USER);
+        return UserDto.builder()
+                .email(USER_EMAIL)
+                .name(USER_NAME)
+                .externalId(EXTERNAL_ID)
+                .build();
     }
 
 }

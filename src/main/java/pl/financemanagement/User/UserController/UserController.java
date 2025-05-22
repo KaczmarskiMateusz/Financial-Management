@@ -4,21 +4,19 @@ import com.nimbusds.jose.JOSEException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import pl.financemanagement.ApplicationConfig.DemoResolver.DemoResolver;
-import pl.financemanagement.User.UserModel.*;
-import pl.financemanagement.User.UserModel.exceptions.UserExistsException;
-import pl.financemanagement.User.UserModel.exceptions.UserNotFoundException;
+import pl.financemanagement.User.UserModel.UserDeleteResponse;
+import pl.financemanagement.User.UserModel.UserRequest;
+import pl.financemanagement.User.UserModel.UserResponse;
+import pl.financemanagement.User.UserModel.UserUpdateRequest;
 import pl.financemanagement.User.UserService.UserService;
 
 import java.security.Principal;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 public class UserController extends DemoResolver<UserService> {
 
     public UserController(@Qualifier("userServiceImpl") UserService service,
@@ -27,21 +25,13 @@ public class UserController extends DemoResolver<UserService> {
     }
 
     @PostMapping("/register")
-    ResponseEntity<UserResponse> createUser(@RequestBody @Valid UserRequest userRequest,
-                                            BindingResult result) throws JOSEException, UserExistsException {
-        if (result.hasErrors()) {
-            return ResponseEntity.badRequest().body(buildErrorResponse(result));
-        }
+    ResponseEntity<UserResponse> createUser(@RequestBody @Valid UserRequest userRequest) throws JOSEException {
         return ResponseEntity.ok(service().createUser(userRequest));
     }
 
-    @PutMapping
-    ResponseEntity<UserResponse> upsertUser(@RequestBody @Valid UserUpdateRequest userRequest,
-                                            BindingResult result,
+    @PutMapping("/me")
+    ResponseEntity<UserResponse> updateUser(@RequestBody @Valid UserUpdateRequest userRequest,
                                             Principal principal) throws JOSEException {
-        if (result.hasErrors()) {
-            return ResponseEntity.badRequest().body(buildErrorResponse(result));
-        }
         return ResponseEntity.ok(resolveService(principal.getName()).updateUser(userRequest, principal.getName()));
     }
 
@@ -50,22 +40,10 @@ public class UserController extends DemoResolver<UserService> {
         return ResponseEntity.ok(resolveService(principal.getName()).getBasicData(principal.getName()));
     }
 
-    @GetMapping("/id/{id}")
-    public ResponseEntity<UserResponse> getUserById(@PathVariable long id,
-                                                    Principal principal) throws UserNotFoundException {
-        return ResponseEntity.ok(resolveService(principal.getName()).getUserById(id, principal.getName()));
-    }
-
     @DeleteMapping("/{externalId}")
-    ResponseEntity<UserDeleteResponse> deleteUser(@RequestParam UUID externalId,
-                                                  Principal principal) throws UserNotFoundException {
+    ResponseEntity<UserDeleteResponse> deleteUser(@PathVariable UUID externalId,
+                                                  Principal principal) {
         return ResponseEntity.ok(resolveService(principal.getName()).deleteUser(externalId, principal.getName()));
-    }
-
-    private UserErrorResponse buildErrorResponse(BindingResult result) {
-        Map<String, String> errors = new HashMap<>();
-        result.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
-        return new UserErrorResponse(false, errors);
     }
 
 }

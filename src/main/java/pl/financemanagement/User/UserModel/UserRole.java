@@ -1,5 +1,8 @@
 package pl.financemanagement.User.UserModel;
 
+import lombok.Getter;
+
+@Getter
 public enum UserRole {
 
     USER("user"),
@@ -12,7 +15,4 @@ public enum UserRole {
         this.role = role;
     }
 
-    public String getRole() {
-        return role;
-    }
 }

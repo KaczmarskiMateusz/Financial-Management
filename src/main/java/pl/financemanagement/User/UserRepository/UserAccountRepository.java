@@ -30,7 +30,7 @@ public interface UserAccountRepository extends JpaRepository<UserAccount, Long> 
 
     @Query(nativeQuery = true, value = """
             SELECT *
-            FROM app.user_account 
+            FROM app.user_account
             WHERE id = :id
             """)
     Optional<UserAccount> findUserById(@Param("id") long id);

@@ -43,7 +43,7 @@ public class SpringSecurity {
                         .requestMatchers("/h2-console/**",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
-                                "/user/register",
+                                "/users/register",
                                 "/login",
                                 "/expense/categories",
                                 "/event/**").permitAll()

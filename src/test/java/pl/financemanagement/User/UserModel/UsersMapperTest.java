@@ -12,16 +12,16 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 class UsersMapperTest {
 
     private final static String NAME = "Demo";
-    private final static String EMAIL = "demo@financialapp.com";
-    private final static String UPDATED_USER_EMAIL = "demo1@financialapp.com";
+    private final static String USER_EMAIL = "demo@financialapp.com";
+    private final static String USER_NAME = "Demo";
     private final static String PASSWORD = "password";
     private final static UUID EXTERNAL_ID = UUID.fromString("f9969a5d-55d2-4e31-83e1-5759500a1e6d");
 
     @Test
-    void userDtoMapper() {
+    void mapToUserDto() {
         UserDto expected = buildUserDto();
 
-        assertThat(UsersMapper.userDtoMapper(buildUserAccount()))
+        assertThat(UsersMapper.mapToUserDto(buildUserAccount()))
                 .isNotNull()
                 .usingRecursiveComparison()
                 .ignoringFields("externalId")
@@ -29,17 +29,16 @@ class UsersMapperTest {
     }
 
     private UserDto buildUserDto() {
-        UserDto userDto = new UserDto();
-        userDto.setName(NAME);
-        userDto.setEmail(EMAIL);
-        userDto.setExternalId(EXTERNAL_ID);
-        userDto.setUserRole(UserRole.USER);
-        return userDto;
+        return UserDto.builder()
+                .email(USER_EMAIL)
+                .name(USER_NAME)
+                .externalId(EXTERNAL_ID)
+                .build();
     }
 
     private static UserAccount buildUserAccount() {
         UserAccount userAccount = new UserAccount();
-        userAccount.setEmail(EMAIL);
+        userAccount.setEmail(USER_EMAIL);
         userAccount.setName(NAME);
         userAccount.setPassword(PASSWORD);
         userAccount.setUserRole(UserRole.USER);

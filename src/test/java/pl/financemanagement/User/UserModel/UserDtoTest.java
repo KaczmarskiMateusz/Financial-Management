@@ -26,11 +26,10 @@ class UserDtoTest {
     }
 
     private UserDto createUserDto() {
-        UserDto userDto = new UserDto();
-        userDto.setExternalId(EXTERNAL_ID);
-        userDto.setEmail(USER_EMAIL);
-        userDto.setName(USER_NAME);
-        userDto.setUserRole(UserRole.USER);
-        return userDto;
+        return UserDto.builder()
+                .email(USER_EMAIL)
+                .name(USER_NAME)
+                .externalId(EXTERNAL_ID)
+                .build();
     }
 }

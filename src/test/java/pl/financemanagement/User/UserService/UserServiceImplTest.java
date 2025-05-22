@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static pl.financemanagement.User.UserModel.UsersMapper.userDtoMapper;
+import static pl.financemanagement.User.UserModel.UsersMapper.mapToUserDto;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
@@ -53,7 +53,7 @@ class UserServiceImplTest {
         when(jwtService.generateUserToken(any(), any())).thenReturn(TOKEN);
 
         UserResponse userResponse =
-                new UserResponse(true, UsersMapper.userDtoMapper(buildUserAccount(PASSWORD, NAME, email)), TOKEN);
+                new UserResponse(true, UsersMapper.mapToUserDto(buildUserAccount(PASSWORD, NAME, email)), TOKEN);
 
         assertThat(userService.createUser(buildUserRequest()))
                 .isNotNull()
@@ -83,7 +83,7 @@ class UserServiceImplTest {
         when(jwtService.generateUserToken(any(), any())).thenReturn(TOKEN);
 
         UserResponse expectedResponse =
-                new UserResponse(true, userDtoMapper(buildUserAccount(PASSWORD, NAME, USER_EMAIL)), TOKEN);
+                new UserResponse(true, mapToUserDto(buildUserAccount(PASSWORD, NAME, USER_EMAIL)), TOKEN);
 
         assertThat(userService.updateUser(buildUserUpdateRequest(), USER_EMAIL))
                 .isNotNull()
@@ -102,7 +102,7 @@ class UserServiceImplTest {
         when(userAccountRepository.save(any())).thenReturn(userAccount);
         when(jwtService.generateUserToken(any(), any())).thenReturn(TOKEN);
 
-        UserResponse expectedResponse = new UserResponse(true, userDtoMapper(userAccount),
+        UserResponse expectedResponse = new UserResponse(true, mapToUserDto(userAccount),
                 TOKEN);
 
         assertThat(userService.updateUser(buildUserUpdateRequest(), "example1@email.pl"))
@@ -132,7 +132,7 @@ class UserServiceImplTest {
     @Test
     void isUserExistByEmail() {
         UserAccount userAccount = buildUserAccount(PASSWORD, NAME, USER_EMAIL);
-        UserResponse expectedResponse = new UserResponse(true, userDtoMapper(userAccount));
+        UserResponse expectedResponse = new UserResponse(true, mapToUserDto(userAccount));
 
         when(userAccountRepository.findUserByEmail(any()))
                 .thenReturn(Optional.of(buildUserAccount(PASSWORD, NAME, USER_EMAIL)));
@@ -155,7 +155,7 @@ class UserServiceImplTest {
     @Test
     void getUserByIdWhenExists() {
         UserAccount userAccount = buildUserAccount(PASSWORD, NAME, USER_EMAIL);
-        UserResponse expectedResponse = new UserResponse(true, userDtoMapper(userAccount));
+        UserResponse expectedResponse = new UserResponse(true, mapToUserDto(userAccount));
 
         when(userAccountRepository.findUserById(anyLong()))
                 .thenReturn(Optional.of(buildUserAccount(PASSWORD, NAME, USER_EMAIL)));
@@ -224,7 +224,7 @@ class UserServiceImplTest {
     }
 
     private UserResponse buildUserResponse() {
-        return new UserResponse(true, UsersMapper.userDtoMapper(buildUserAccount(PASSWORD, NAME, USER_EMAIL)));
+        return new UserResponse(true, UsersMapper.mapToUserDto(buildUserAccount(PASSWORD, NAME, USER_EMAIL)));
     }
 
 }

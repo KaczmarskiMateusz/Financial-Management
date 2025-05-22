@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import pl.financemanagement.AppTools.AppTools;
 import pl.financemanagement.JWToken.Service.JwtService;
@@ -21,7 +22,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static pl.financemanagement.User.UserModel.UserRole.USER;
-import static pl.financemanagement.User.UserModel.UsersMapper.userDtoMapper;
+import static pl.financemanagement.User.UserModel.UsersMapper.mapToUserDto;
 
 @Service
 @Qualifier("userServiceImpl")
@@ -32,17 +33,21 @@ public class UserServiceImpl implements UserService {
     private final JwtService jwtService;
     private final UserAccountRepository userAccountRepository;
     private final PasswordService passwordService;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     @Autowired
     public UserServiceImpl(JwtService jwtService,
                            UserAccountRepository userAccountRepository,
-                           PasswordService passwordService) {
+                           PasswordService passwordService,
+                           KafkaTemplate<String, Object> kafkaTemplate) {
         this.jwtService = jwtService;
         this.userAccountRepository = userAccountRepository;
         this.passwordService = passwordService;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     @Override
+    @Transactional
     public UserResponse createUser(UserRequest userRequest) throws JOSEException {
         LOGGER.info("Attempting to create user with email: {}", userRequest.getEmail());
         Optional<UserAccount> existingUser = userAccountRepository.findUserByEmail(userRequest.getEmail());
@@ -57,16 +62,17 @@ public class UserServiceImpl implements UserService {
 
         String token = jwtService.generateUserToken(userRequest.getEmail(), USER.getRole());
 
-        return new UserResponse(true, userDtoMapper(savedUser), token);
+        return new UserResponse(true, mapToUserDto(savedUser), token);
     }
 
     @Override
     @Transactional
     public UserResponse updateUser(UserUpdateRequest userRequest, String email) throws JOSEException {
+        LOGGER.info("Attempting to update user with email: {}", email);
         UserAccount userAccount = userAccountRepository.findUserByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User with email " + email + " does not exist"));
 
-        if (AppTools.isNotBlank(userRequest.getNewEmail()) && isEmailExists(userRequest.getNewEmail(), userAccount)) {
+        if (AppTools.isNotBlank(userRequest.getNewEmail()) && isEmailUniqueForOtherUsers(userRequest.getNewEmail(), userAccount)) {
             throw new EmailAlreadyInUseException("Email " + userRequest.getNewEmail() + " is already in use.");
         }
 
@@ -81,38 +87,39 @@ public class UserServiceImpl implements UserService {
 
         userAccount.setModifyOn(Instant.now());
         UserAccount savedUser = userAccountRepository.save(userAccount);
-        String token = jwtService.generateUserToken(savedUser.getEmail(), USER.getRole());
+        String token = getGeneratedUserToken(savedUser);
 
-        return new UserResponse(true, userDtoMapper(savedUser), token);
+        return new UserResponse(true, mapToUserDto(savedUser), token);
     }
 
     @Override
     public UserResponse getBasicData(String email) {
         UserAccount user = userAccountRepository.findUserByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User with email " + email + " not found."));
-        return new UserResponse(true, userDtoMapper(user));
+        return new UserResponse(true, mapToUserDto(user));
     }
 
     @Override
-    public UserResponse getUserById(long id, String email) throws UserNotFoundException {
+    public UserResponse getUserById(long id, String email) {
         UserAccount user = userAccountRepository.findUserById(id)
                 .orElseThrow(() -> new UserNotFoundException("User with id " + id + " not found."));
-        return new UserResponse(true, userDtoMapper(user));
+        return new UserResponse(true, mapToUserDto(user));
     }
 
     @Override
     @Transactional
-    public UserDeleteResponse deleteUser(UUID externalId, String email) throws UserNotFoundException {
+    public UserDeleteResponse deleteUser(UUID externalId, String email) {
         UserAccount userAccount = userAccountRepository.findUserByEmailAndExternalId(email, externalId)
                 .orElseThrow(() -> new UserNotFoundException("User with email " + email + " does not exist"));
 
-        userAccountRepository.delete(userAccount);
+        kafkaTemplate.send("user_account_delete_topic", userAccount);
+
         LOGGER.info("User with email {} is successfully removed", userAccount.getName());
 
         return new UserDeleteResponse(true, "User deleted.");
     }
 
-    private boolean isEmailExists(String newEmail, UserAccount currentAccount) {
+    private boolean isEmailUniqueForOtherUsers(String newEmail, UserAccount currentAccount) {
         Optional<UserAccount> userWithSameEmail = userAccountRepository.findUserByEmail(newEmail);
         return userWithSameEmail.isEmpty() || userWithSameEmail.get().getId() == currentAccount.getId();
     }
@@ -126,6 +133,10 @@ public class UserServiceImpl implements UserService {
         userToSave.setUserRole(USER);
         userToSave.setPassword(passwordService.hashPassword(userRequest.getPassword()));
         return userToSave;
+    }
+
+    private String getGeneratedUserToken(UserAccount savedUser) throws JOSEException {
+        return jwtService.generateUserToken(savedUser.getEmail(), USER.getRole());
     }
 
 }
